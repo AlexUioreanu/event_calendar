@@ -12,8 +12,7 @@ export default function Form() {
   const router = useRouter();
 
   const [inputs, setinputs] = useState({
-    name: "",
-    email: "",
+    username: "",
     password: "",
   });
 
@@ -86,9 +85,8 @@ export default function Form() {
           <OutlinedTextField
             name="username"
             label="Username"
-            type="text"
             onChange={handleChange}
-            value={inputs.email}
+            value={inputs.username}
             required
             sx={whiteButtonOutlineStyles}
           />

@@ -29,14 +29,14 @@ export default function Form() {
     const formData = new FormData(e.currentTarget);
 
     const response = await signIn("credentials", {
-      email: formData.get("email"),
+      email: formData.get("username"),
       password: formData.get("password"),
       redirect: false,
     });
     console.log(`login response=${response}`);
     if (response?.ok) {
       console.log(`login response=${response}`);
-      router.push("/dashboard");
+      router.push("/calendar");
       router.refresh();
     } else {
       throw Error("failed to log in");
@@ -53,7 +53,7 @@ export default function Form() {
           padding: "20px",
           borderRadius: "2rem",
           backgroundColor: "#fff",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
+          boxShadow: " 0 1.5rem 80px rgba(0, 0, 0, 0.8)",
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
@@ -84,9 +84,9 @@ export default function Form() {
           className="flex flex-col gap-2 w-96 mt-10 "
         >
           <OutlinedTextField
-            name="email"
-            label="Email"
-            type="email"
+            name="username"
+            label="Username"
+            type="text"
             onChange={handleChange}
             value={inputs.email}
             required

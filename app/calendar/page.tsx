@@ -6,50 +6,50 @@ import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import EventModal from "../components/EventModal";
-import dayjs from "dayjs";
 
 export default function CalendarPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState<Event[]>([]);
 
+  async function fetchEvents() {
+    try {
+      const response = await fetch(`/api/auth/events`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      if (response.ok) {
+        const fetchedEvents = await response.json();
+        console.log(fetchedEvents.events);
+
+        const formattedEvents: Event[] = fetchedEvents.events.map(
+          (event: any) => ({
+            id: event.event_id,
+            title: event.title,
+            start: event.start_date,
+            end: event.end_date,
+            description: event.description,
+            color: event.color,
+          })
+        );
+
+        console.log(formattedEvents);
+
+        setEvents(formattedEvents);
+      } else {
+        console.error("Error updating events:", await response.json());
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
+  }
+
   console.log(events);
   useEffect(() => {
-    async function fetchEvents() {
-      try {
-        const response = await fetch(`/api/auth/events`, {
-          method: "GET",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
-        if (response.ok) {
-          const fetchedEvents = await response.json();
-          console.log(fetchedEvents.events);
-
-          const formattedEvents: Event[] = fetchedEvents.events.map(
-            (event: any) => ({
-              id: event.event_id,
-              title: event.title,
-              start: event.start_date,
-              end: event.end_date,
-              description: event.description,
-              color: event.color,
-            })
-          );
-
-          console.log(formattedEvents);
-
-          setEvents(formattedEvents);
-        } else {
-          console.error("Error updating events:", await response.json());
-        }
-      } catch (error) {
-        console.error("Error updating event:", error);
-      }
-    }
     fetchEvents();
-  }, []);
+  }, [modalOpen]);
 
   const handleDateClick = (arg: any) => {
     setSelectedDate(arg.dateStr);
@@ -99,7 +99,6 @@ export default function CalendarPage() {
       <EventModal
         isOpen={modalOpen}
         onRequestClose={() => setModalOpen(false)}
-        // onSubmit={handleEventSubmit}
         date={selectedDate}
       />
     </div>

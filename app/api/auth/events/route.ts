@@ -2,49 +2,51 @@ import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 import { getServerSession } from "next-auth";
 import { NextApiRequest, NextApiResponse } from "next";
+import { Event } from "@/types";
+import { getSession } from "next-auth/react";
 
 const handleError = (error: any, message: string) => {
   console.error(message, error);
   return NextResponse.json({ message }, { status: 500 });
 };
-
 export async function PUT(req: Request) {
-  const { movieId } = await req.json();
+  const data = await req.json();
+  const { event } = data;
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
   try {
-    const existingFavorite = await sql`
-      SELECT * FROM user_favorites
-      WHERE user_email = ${userEmail} AND movie_id = ${movieId}
+    const existingEvent = await sql`
+      SELECT * FROM events
+      WHERE user_email = ${userEmail} AND title = ${event.title} AND description = ${event.description} AND start_date = ${event.startDate} AND end_date = ${event.endDate} AND color = ${event.color}
     `;
 
-    if (existingFavorite.rows.length > 0) {
+    if (existingEvent.rows.length > 0) {
       return NextResponse.json(
-        { message: "Favorite already exist's " },
+        { message: "Event already exist's " },
         { status: 400 }
       );
     }
 
     const updateResponse = await sql`
-      INSERT INTO user_favorites (user_email, movie_id)
-      VALUES (${userEmail},${movieId})
-    `;
+  INSERT INTO events (title, description, color, user_email, start_date, end_date)
+  VALUES (${event.title}, ${event.description}, ${event.color}, ${userEmail}, ${event.start}, ${event.end})
+`;
 
     if (updateResponse.rowCount > 0) {
-      return NextResponse.json({ message: "Favorite added successfully" });
+      return NextResponse.json({ message: "Event added successfully" });
     } else {
       return NextResponse.json(
-        { message: "Favorite update failed" },
+        { message: "Event update failed" },
         { status: 400 }
       );
     }
   } catch (error) {
-    return handleError(error, "Error updating favorite");
+    return handleError(error, "Error updating event");
   }
 }
 
-export async function DELETE(request: Request) {
+export async function DELETE(request: Request, res: NextApiResponse) {
   const { movieId } = await request.json();
   const session = await getServerSession();
   const userEmail = session?.user?.email;
@@ -66,23 +68,22 @@ export async function DELETE(request: Request) {
     return handleError(error, "Error removing favorite");
   }
 }
-
 export const GET = async (req: Request, res: Response) => {
+  const session = await getServerSession();
+
+  const userEmail = session?.user?.email;
+
   try {
-    const session = await getServerSession();
-
-    const userEmail = session?.user?.email;
-
     const result = await sql`
-      SELECT movie_id FROM user_favorites WHERE user_email = ${userEmail}
+      SELECT * FROM events WHERE user_email = ${userEmail}
     `;
-    const movieIds = result.rows.map((row) => row.movie_id);
+    const events = result.rows;
 
-    if (movieIds.length > 0) {
+    if (events.length > 0) {
       return NextResponse.json(
         {
           message: "Favorite list success get",
-          movieIds,
+          events,
         },
         { status: 200 }
       );
@@ -90,15 +91,15 @@ export const GET = async (req: Request, res: Response) => {
       return NextResponse.json(
         {
           message: "Error getting favorite list",
-          data: movieIds,
+          data: events,
         },
         { status: 404 }
       );
     }
   } catch (error) {
-    console.error("Error getting favorite movies list:", error);
+    console.error("Error getting events list:", error);
     return NextResponse.json({
-      message: "Error getting favorite movies listsss",
+      message: "Error getting event listsss",
     });
   }
 };

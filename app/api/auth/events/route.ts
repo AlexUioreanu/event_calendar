@@ -34,7 +34,34 @@ export async function PUT(req: Request) {
 `;
 
     if (updateResponse.rowCount > 0) {
-      return NextResponse.json({ message: "Event added successfully" });
+      return NextResponse.json({ message: "Event updated successfully" });
+    } else {
+      return NextResponse.json(
+        { message: "Event update failed" },
+        { status: 400 }
+      );
+    }
+  } catch (error) {
+    return handleError(error, "Error updating event");
+  }
+}
+
+export async function POST(req: Request, res: Response) {
+  const data = await req.json();
+  const { event } = data;
+  const session = await getServerSession();
+  const userEmail = session?.user?.email;
+
+  try {
+    // Insert logic here
+    const result = await sql`
+      INSERT INTO events (title, description, color, user_email, start_date, end_date)
+      VALUES (${event.title}, ${event.description}, ${event.color}, ${userEmail}, ${event.start}, ${event.end})
+      RETURNING *;
+    `;
+
+    if (result.rowCount > 0) {
+      return NextResponse.json({ message: "Event updated successfully" });
     } else {
       return NextResponse.json(
         { message: "Event update failed" },

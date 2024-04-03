@@ -25,8 +25,7 @@ export default async function RootLayout({
             alignItems: "center",
             justifyContent: "space-between",
             padding: "1rem",
-            borderBottom: "8px solid orange",
-            backgroundColor: "red",
+            backgroundColor: "black",
             color: "white",
           }}
         >
@@ -34,17 +33,6 @@ export default async function RootLayout({
             <>
               <div style={{ flex: 1 }}>
                 <Logout />
-              </div>
-              <div
-                style={{
-                  display: "flex",
-                  justifyContent: "center",
-                  flex: 1,
-                  gap: "6rem",
-                }}
-              >
-                <Link href="/dashboard">Dashboard</Link>
-                <Link href="/favorites">Favorites</Link>
               </div>
               <div style={{ flex: 1 }} />{" "}
             </>

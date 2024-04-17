@@ -9,6 +9,7 @@ import { Box, MenuItem, styled } from "@mui/material";
 import { Event } from "@/types";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/en-gb";
+import { simpleFieldStyle } from "../utils";
 
 const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
   const selectableColors = {
@@ -150,6 +151,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
             onChange={(e) => setTitle(e.target.value)}
             variant="outlined"
             fullWidth
+            sx={simpleFieldStyle}
           />
           <LocalizationProvider
             dateAdapter={AdapterDayjs}
@@ -158,16 +160,23 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
             <DateRangePicker
               value={dateRange}
               onChange={(newValue) => setDateRange(newValue)}
+              sx={simpleFieldStyle}
             />
           </LocalizationProvider>
           <TextField
             label="Description"
             multiline
+            minRows={12}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             variant="outlined"
             fullWidth
+            InputProps={{
+              style: { resize: "both" },
+            }}
+            sx={simpleFieldStyle}
           />
+
           <TextField
             label="Color"
             select
@@ -179,6 +188,20 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
             sx={{
               mt: 2,
               backgroundColor: color,
+              "& label.Mui-focused": {
+                color: "#A66914",
+              },
+              "& .MuiOutlinedInput-root": {
+                "& fieldset": {
+                  borderColor: "#835514",
+                },
+                "&:hover fieldset": {
+                  borderColor: "#A66914",
+                },
+                "&.Mui-focused fieldset": {
+                  borderColor: "#A66914",
+                },
+              },
             }}
           >
             {Object.entries(selectableColors).map(([colorName, colorValue]) => (

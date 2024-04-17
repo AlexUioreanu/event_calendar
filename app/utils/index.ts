@@ -31,3 +31,27 @@ export const whiteButtonOutlineStyles = {
     borderBottom: "2px solid #A66914",
   },
 };
+
+export const simpleFieldStyle = {
+  "& label.Mui-focused": {
+    color: "#A66914", // Brown when focused
+  },
+  "& .MuiInputLabel-outlined": {
+    color: "#A66914", // Light brown for placeholder and label
+  },
+  "& .MuiOutlinedInput-root": {
+    "& fieldset": {
+      borderColor: "#835514", // Default border color
+    },
+    "&:hover fieldset": {
+      borderColor: "#A66914", // Darker brown on hover
+    },
+    "&.Mui-focused fieldset": {
+      borderColor: "#A66914", // Darker brown when focused
+    },
+    "& input::placeholder": {
+      color: "#A66914", // Light brown placeholder
+      opacity: 1, // Ensure placeholder is fully visible
+    },
+  },
+};

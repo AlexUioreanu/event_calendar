@@ -2,15 +2,26 @@
 import React, { useCallback, useEffect, useState } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import EventModal from "../components/EventModal";
+import {
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+} from "@mui/material";
+import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 
 export default function CalendarPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState<Event[]>([]);
+
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [dialogMessage, setDialogMessage] = useState("");
 
   async function fetchEvents() {
     try {
@@ -20,6 +31,7 @@ export default function CalendarPage() {
           "Content-Type": "application/json",
         },
       });
+      console.log(response);
       if (response.ok) {
         const fetchedEvents = await response.json();
         console.log(fetchedEvents.events);
@@ -60,23 +72,104 @@ export default function CalendarPage() {
     throw new Error("Function not implemented.");
   }
 
-  // const handleEventSubmit = (newEvent: any) => {
-  //   setEvents((currentEvents) => [
-  //     ...currentEvents,
-  //     {
-  //       title: newEvent.title,
-  //       start: newEvent.date,
-  //       end: newEvent.date,
-  //       allDay: true,
-  //       color: newEvent.color,
-  //       description: newEvent.description,
-  //     },
-  //   ]);
-  //   setModalOpen(false);
-  // };
+  async function handleDeleteEvent(eventInfo: any) {
+    try {
+      if (eventInfo.title !== ".") {
+        setDialogMessage("This event cannot be deleted.");
+        setDialogOpen(true);
+      } else {
+        const response = await fetch(`/api/auth/events/`, {
+          method: "DELETE",
+          body: JSON.stringify({ eventId: eventInfo.id }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+
+        console.log(eventInfo.title);
+
+        if (response.ok) {
+          console.log("Event deleted successfully");
+          fetchEvents();
+        } else {
+          console.error("Failed to delete event:", await response.json());
+        }
+      }
+    } catch (error) {
+      console.error("Error deleting event:", error);
+    }
+  }
+
+  function renderEventContent(eventInfo: any) {
+    return (
+      <div
+        className="event-hoverable event-card"
+        style={{
+          position: "relative",
+          padding: "5px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+        }}
+      >
+        {eventInfo.event.title}
+        <span
+          style={{
+            cursor: "pointer",
+            color: "black",
+            paddingRight: "8px",
+            paddingLeft: "8px",
+            borderRadius: "20%",
+            transition: "background-color 0.3s",
+            opacity: "1",
+          }}
+          onMouseEnter={(e) =>
+            (e.currentTarget.style.backgroundColor = "lightgrey")
+          }
+          onMouseLeave={(e) =>
+            (e.currentTarget.style.backgroundColor = "transparent")
+          }
+          onClick={(e) => {
+            e.stopPropagation();
+            handleDeleteEvent(eventInfo.event);
+          }}
+        >
+          X
+        </span>
+      </div>
+    );
+  }
 
   return (
     <>
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        aria-labelledby="alert-dialog-title"
+        aria-describedby="alert-dialog-description"
+      >
+        <DialogTitle
+          id="alert-dialog-title"
+          style={{ display: "flex", alignItems: "center", color: "#D32F2F" }}
+        >
+          <ErrorOutlineIcon style={{ marginRight: 10 }} />
+          {"Error"}
+        </DialogTitle>
+        <DialogContent>
+          <DialogContentText id="alert-dialog-description">
+            {dialogMessage}
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            onClick={() => setDialogOpen(false)}
+            color="inherit"
+            autoFocus
+          >
+            OK
+          </Button>
+        </DialogActions>
+      </Dialog>
       <style>
         {`
           /* Overall calendar background */
@@ -144,7 +237,6 @@ export default function CalendarPage() {
     .fc-popover .fc-scroller {
       scrollbar-color: #835514 #f5f5dc; /* Custom scrollbar colors */
     }
-
         `}
       </style>
       <div
@@ -170,15 +262,12 @@ export default function CalendarPage() {
             dayCellContent={(e) => e.dayNumberText}
             dateClick={handleDateClick}
             firstDay={1}
-            eventClick={() => {
-              handleEventClick();
-            }}
+            eventClick={handleEventClick}
             plugins={[dayGridPlugin, interactionPlugin, rrulePlugin]}
             initialView="dayGridMonth"
             events={events}
             selectable={true}
             selectMirror={true}
-            // select={handleSelect}
             headerToolbar={{
               left: "prev,next today",
               center: "title",
@@ -196,11 +285,5 @@ export default function CalendarPage() {
         </div>
       </div>
     </>
-  );
-}
-
-function renderEventContent(eventInfo: any) {
-  return (
-    <div className="event-hoverable event-card">{eventInfo.event.title}</div>
   );
 }

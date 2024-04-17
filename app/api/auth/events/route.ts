@@ -74,13 +74,14 @@ export async function POST(req: Request, res: Response) {
 }
 
 export async function DELETE(request: Request, res: NextApiResponse) {
-  const { movieId } = await request.json();
+  const { eventId } = await request.json();
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
+  console.log({ eventId });
   try {
     const updateResponse = await sql`
-     DELETE FROM user_favorites WHERE user_email = ${userEmail} AND movie_id = ${movieId} ;
+     DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} ;
     `;
 
     if (updateResponse.rowCount > 0) {
@@ -109,7 +110,15 @@ export const GET = async (req: Request, res: Response) => {
     if (events.length > 0) {
       return NextResponse.json(
         {
-          message: "Favorite list success get",
+          message: "events list success get",
+          events,
+        },
+        { status: 200 }
+      );
+    } else if (events.length == 0) {
+      return NextResponse.json(
+        {
+          message: "events list success get 0 events",
           events,
         },
         { status: 200 }

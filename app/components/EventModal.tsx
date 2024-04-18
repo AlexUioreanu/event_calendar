@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect, useState } from "react";
+import React, { Fragment, use, useEffect, useState } from "react";
 import Modal from "react-modal";
 import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro";
@@ -11,7 +11,9 @@ import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/en-gb";
 import { simpleFieldStyle } from "../utils";
 
-const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
+const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
+  const isEditable: boolean = editingEventID !== null;
+
   const selectableColors = {
     yellow: "#fffa65",
     green: "#006400",
@@ -25,17 +27,19 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
     setErrorMsg("");
   }, []);
 
-  const [title, setTitle] = useState(editingEvent ? editingEvent.title : "");
-  const [description, setDescription] = useState(
-    editingEvent ? editingEvent.description : ""
-  );
-  const [color, setColor] = useState(
-    editingEvent ? editingEvent.color : selectableColors.yellow
-  );
+  const [title, setTitle] = useState("");
+  const [description, setDescription] = useState("");
+  const [color, setColor] = useState(selectableColors.yellow);
   const [dateRange, setDateRange] = useState<[Dayjs | null, Dayjs | null]>([
-    editingEvent ? dayjs(editingEvent.start) : null,
-    editingEvent ? dayjs(editingEvent.end) : null,
+    null,
+    null,
   ]);
+
+  useEffect(() => {
+    if (editingEventID !== null) {
+      fetchEvent();
+    }
+  }, [editingEventID]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -48,21 +52,22 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
       : null;
 
     const eventPayload = {
-      id: editingEvent?.id,
+      id: editingEventID?.id,
       title,
       description,
       color,
       start: adjustedStartDate,
       end: adjustedEndDate,
     };
-
+    console.log(editingEventID ? "PUT" : "POST");
+    console.log(editingEventID);
     try {
       const response = await fetch(
-        editingEvent
-          ? `/api/auth/events/${editingEvent.id}`
+        editingEventID
+          ? `/api/auth/events/${editingEventID}`
           : `/api/auth/events`,
         {
-          method: editingEvent ? "PUT" : "POST",
+          method: editingEventID ? "PUT" : "POST",
           body: JSON.stringify({ event: eventPayload }),
           headers: { "Content-Type": "application/json" },
         }
@@ -87,6 +92,48 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
       setErrorMsg("An error occurred while updating the event.");
     }
   };
+
+  async function fetchEvent() {
+    try {
+      const response = await fetch(`/api/auth/events/${editingEventID}`, {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+      console.log(response);
+      if (response.ok) {
+        const fetchedEvents = await response.json();
+
+        const formattedEvents: Event = fetchedEvents.events
+          .map((event: any) => ({
+            id: event.event_id,
+            title: event.title,
+            start: event.start_date,
+            end: event.end_date,
+            description: event.description,
+            color: event.color,
+          }))
+          .pop();
+
+        console.log(formattedEvents);
+
+        setTitle(formattedEvents?.title || "");
+        setDescription(formattedEvents?.description || "");
+        setColor(formattedEvents?.color || selectableColors.yellow);
+        setDateRange([
+          formattedEvents?.start ? dayjs(formattedEvents?.start) : null,
+          formattedEvents.end
+            ? dayjs(formattedEvents.end).subtract(1, "day")
+            : null,
+        ]);
+      } else {
+        console.error("Error updating events:", await response.json());
+      }
+    } catch (error) {
+      console.error("Error updating event:", error);
+    }
+  }
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColor(event.target.value);
@@ -113,7 +160,13 @@ const EventModal = ({ isOpen, onRequestClose, editingEvent }: any) => {
       )}
       <Modal
         isOpen={isOpen}
-        onRequestClose={onRequestClose}
+        onRequestClose={() => {
+          onRequestClose();
+          setTitle("");
+          setDescription("");
+          setColor(selectableColors.yellow);
+          setDateRange([null, null]);
+        }}
         contentLabel="Event Modal"
         style={{
           overlay: {

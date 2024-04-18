@@ -52,6 +52,8 @@ export async function POST(req: Request, res: Response) {
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
+  console.log(event);
+
   try {
     // Insert logic here
     const result = await sql`

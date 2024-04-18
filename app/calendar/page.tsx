@@ -19,6 +19,7 @@ export default function CalendarPage() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState<Event[]>([]);
+  const [editingEventID, setEditingEventID] = useState(null);
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -58,7 +59,6 @@ export default function CalendarPage() {
     }
   }
 
-  console.log(events);
   useEffect(() => {
     fetchEvents();
   }, [modalOpen]);
@@ -68,9 +68,16 @@ export default function CalendarPage() {
     setModalOpen(true);
   };
 
-  function handleEventClick() {
-    throw new Error("Function not implemented.");
+  function handleEventClick(event: any) {
+    console.log(event.id);
+    setEditingEventID(event.id);
+    setModalOpen(true);
   }
+
+  const handleModalClose = () => {
+    setModalOpen(false);
+    setEditingEventID(null);
+  };
 
   async function handleDeleteEvent(eventInfo: any) {
     try {
@@ -262,7 +269,7 @@ export default function CalendarPage() {
             dayCellContent={(e) => e.dayNumberText}
             dateClick={handleDateClick}
             firstDay={1}
-            eventClick={handleEventClick}
+            eventClick={(event) => handleEventClick(event.event)}
             plugins={[dayGridPlugin, interactionPlugin, rrulePlugin]}
             initialView="dayGridMonth"
             events={events}
@@ -279,8 +286,10 @@ export default function CalendarPage() {
           />
           <EventModal
             isOpen={modalOpen}
-            onRequestClose={() => setModalOpen(false)}
+            onRequestClose={handleModalClose}
             date={selectedDate}
+            editingEventID={editingEventID}
+            args={selectedDate}
           />
         </div>
       </div>

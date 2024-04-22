@@ -3,10 +3,10 @@ import Form from "./form";
 import { redirect, useRouter } from "next/navigation";
 
 export default async function LoginPage() {
-  const session = await getServerSession();
+  // const session = await getServerSession();
 
-  if (session) {
-    redirect("/calendar");
-  }
+  // if (session) {
+  //   redirect("/calendar");
+  // }
   return <Form />;
 }

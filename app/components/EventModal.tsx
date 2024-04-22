@@ -52,10 +52,10 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     e.preventDefault();
 
     const adjustedStartDate = dateRange[0]
-      ? dayjs(dateRange[0]).subtract(1, "day")
+      ? dayjs(dateRange[0]).subtract(2, "day")
       : null;
     const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).subtract(1, "day")
+      ? dayjs(dateRange[1]).subtract(2, "day")
       : null;
 
     console.log(dateRange[0]);

@@ -50,13 +50,21 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-
-    const adjustedStartDate = dateRange[0]
-      ? dayjs(dateRange[0]).add(0, "day")
-      : null;
-    const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).add(0, "day")
-      : null;
+    var adjustedStartDate;
+    var adjustedEndDate;
+    if (editingEventID !== null) {
+      adjustedStartDate = dateRange[0]
+        ? dayjs(dateRange[0]).subtract(1, "day")
+        : null;
+      adjustedEndDate = dateRange[1]
+        ? dayjs(dateRange[1]).subtract(1, "day")
+        : null;
+    } else {
+      adjustedStartDate = dateRange[0]
+        ? dayjs(dateRange[0]).add(0, "day")
+        : null;
+      adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]).add(0, "day") : null;
+    }
 
     console.log(dateRange[0]);
     console.log(dateRange[1]);

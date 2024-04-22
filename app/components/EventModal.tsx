@@ -52,10 +52,10 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     e.preventDefault();
 
     const adjustedStartDate = dateRange[0]
-      ? dayjs(dateRange[0]).subtract(2, "day")
+      ? dayjs(dateRange[0]).subtract(0, "day")
       : null;
     const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).subtract(2, "day")
+      ? dayjs(dateRange[1]).subtract(0, "day")
       : null;
 
     console.log(dateRange[0]);
@@ -122,10 +122,10 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
             const endDate = new Date(event.end_date);
 
             // Add one day to the start date
-            startDate.setDate(startDate.getDate() + 1);
+            startDate.setDate(startDate.getDate() + 0);
 
             // Add one day to the end date
-            endDate.setDate(endDate.getDate() + 1);
+            endDate.setDate(endDate.getDate() + 0);
 
             // Convert the dates back to strings or your desired format
             return {
@@ -146,9 +146,9 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setColor(formattedEvents?.color || selectableColors.yellow);
         setDateRange([
           formattedEvents?.start
-            ? dayjs(formattedEvents?.start).add(1, "day")
+            ? dayjs(formattedEvents?.start).add(0, "day")
             : null,
-          formattedEvents.end ? dayjs(formattedEvents.end).add(1, "day") : null,
+          formattedEvents.end ? dayjs(formattedEvents.end).add(0, "day") : null,
         ]);
       } else {
         console.error("Error updating events:", await response.json());

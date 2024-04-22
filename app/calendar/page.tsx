@@ -42,9 +42,9 @@ export default function CalendarPage() {
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
 
-            startDate.setDate(startDate.getDate() + 2);
+            startDate.setDate(startDate.getDate() + 0);
 
-            endDate.setDate(endDate.getDate() + 2);
+            endDate.setDate(endDate.getDate() + 0);
 
             return {
               id: event.event_id,

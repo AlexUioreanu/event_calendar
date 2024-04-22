@@ -18,7 +18,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     pink: "pink",
     lightGreen: "lightgreen",
     red: "red",
-    blue: "blue",
+    blue: "lightblue",
     white: "white",
   };
 
@@ -51,20 +51,23 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const adjustedStartDate = dateRange[0]
-      ? dayjs(dateRange[0]).add(1, "day")
-      : null;
-    const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).add(2, "day")
-      : null;
+    // const adjustedStartDate = dateRange[0]
+    //   ? dayjs(dateRange[0]).add(1, "day")
+    //   : null;
+    // const adjustedEndDate = dateRange[1]
+    //   ? dayjs(dateRange[1]).add(2, "day")
+    //   : null;
+
+    console.log(dateRange[0]);
+    console.log(dateRange[1]);
 
     const eventPayload = {
       id: editingEventID?.id,
       title,
       description,
       color,
-      start: adjustedStartDate,
-      end: adjustedEndDate,
+      start: dateRange[0],
+      end: dateRange[1],
     };
     console.log(editingEventID ? "PUT" : "POST");
     console.log(editingEventID);

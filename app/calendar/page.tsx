@@ -115,8 +115,10 @@ export default function CalendarPage() {
           width: "100%",
           position: "relative",
           padding: "5px",
+          borderRadius: "10px",
           display: "flex",
           alignItems: "center",
+          margin: 0,
           backgroundColor: eventInfo.event.backgroundColor || "#A52A2A",
           justifyContent: "space-between",
         }}
@@ -196,18 +198,6 @@ export default function CalendarPage() {
             border-color: #A66914; /* SaddleBrown to maintain the theme */
           }
 
-          /* Background and text color for event elements */
-          .fc .fc-event {
-            background-color: #A52A2A; /* Brown background for events */
-            color: white; /* White text for contrast */
-            border: 1px solid #A66914; /* SaddleBrown border for distinction */
-          }
-          
-          /* Hover effect for event elements */
-          .fc .fc-event:hover {
-            background-color: #A66914; /* Darker brown on hover for interactivity */
-          }
-
           .fc .fc-more-link {
   background-color: #A66914; /* dark brown */
   color: white; /* text color */
@@ -246,6 +236,13 @@ export default function CalendarPage() {
     .fc-popover .fc-scroller {
       scrollbar-color: #835514 #f5f5dc; /* Custom scrollbar colors */
     }
+
+    .fc-event.fc-event-green, /* Adjust class names as needed */
+.fc-event.fc-event-blue, 
+
+    .fc-event {
+  margin: 0;
+}
         `}
       </style>
       <div

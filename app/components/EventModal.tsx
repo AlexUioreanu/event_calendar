@@ -242,9 +242,6 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
             select
             onChange={handleColorChange}
             variant="outlined"
-            SelectProps={{
-              renderValue: (selected) => `${selected}`,
-            }}
             sx={{
               mt: 2,
               backgroundColor: color,
@@ -264,10 +261,10 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
               },
             }}
           >
-            {Object.entries(selectableColors).map(([colorName, colorValue]) => (
+            {Object.entries(selectableColors).map(([colorValue]) => (
               <MenuItem
-                key={colorName}
-                value={colorName}
+                key={colorValue}
+                value={colorValue}
                 sx={{
                   display: "flex",
                   alignItems: "center",

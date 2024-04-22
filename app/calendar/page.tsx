@@ -38,14 +38,23 @@ export default function CalendarPage() {
         console.log(fetchedEvents.events);
 
         const formattedEvents: Event[] = fetchedEvents.events.map(
-          (event: any) => ({
-            id: event.event_id,
-            title: event.title,
-            start: event.start_date,
-            end: event.end_date,
-            description: event.description,
-            color: event.color,
-          })
+          (event: any) => {
+            const startDate = new Date(event.start_date);
+            const endDate = new Date(event.end_date);
+
+            startDate.setDate(startDate.getDate() + 1);
+
+            endDate.setDate(endDate.getDate() + 2);
+
+            return {
+              id: event.event_id,
+              title: event.title,
+              start: startDate.toISOString(),
+              end: endDate.toISOString(),
+              description: event.description,
+              color: event.color,
+            };
+          }
         );
 
         console.log(formattedEvents);

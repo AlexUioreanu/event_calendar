@@ -51,12 +51,12 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    const adjustedStartDate = dateRange[0]
-      ? dayjs(dateRange[0]).add(1, "day")
-      : null;
-    const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).add(1, "day")
-      : null;
+    // const adjustedStartDate = dateRange[0]
+    //   ? dayjs(dateRange[0]).add(1, "day")
+    //   : null;
+    // const adjustedEndDate = dateRange[1]
+    //   ? dayjs(dateRange[1]).add(1, "day")
+    //   : null;
 
     console.log(dateRange[0]);
     console.log(dateRange[1]);
@@ -66,8 +66,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       title,
       description,
       color,
-      start: adjustedStartDate,
-      end: adjustedEndDate,
+      start: dateRange[0],
+      end: dateRange[1],
     };
     console.log(editingEventID ? "PUT" : "POST");
     console.log(editingEventID);
@@ -116,14 +116,27 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         const fetchedEvents = await response.json();
 
         const formattedEvents: Event = fetchedEvents.events
-          .map((event: any) => ({
-            id: event.event_id,
-            title: event.title,
-            start: event.start_date,
-            end: event.end_date,
-            description: event.description,
-            color: event.color,
-          }))
+          .map((event: any) => {
+            // Parse the start and end dates from the event
+            const startDate = new Date(event.start_date);
+            const endDate = new Date(event.end_date);
+
+            // Add one day to the start date
+            startDate.setDate(startDate.getDate() + 1);
+
+            // Add one day to the end date
+            endDate.setDate(endDate.getDate() + 1);
+
+            // Convert the dates back to strings or your desired format
+            return {
+              id: event.event_id,
+              title: event.title,
+              start: startDate.toISOString(), // Assuming the dates need to be in ISO format
+              end: endDate.toISOString(),
+              description: event.description,
+              color: event.color,
+            };
+          })
           .pop();
 
         console.log(formattedEvents);

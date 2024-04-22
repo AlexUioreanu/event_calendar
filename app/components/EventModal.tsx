@@ -121,11 +121,11 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
 
-            // Add one day to the start date
-            startDate.setDate(startDate.getDate() + 1);
+            // // Add one day to the start date
+            // startDate.setDate(startDate.getDate() + 1);
 
-            // Add one day to the end date
-            endDate.setDate(endDate.getDate() + 1);
+            // // Add one day to the end date
+            // endDate.setDate(endDate.getDate() + 1);
 
             // Convert the dates back to strings or your desired format
             return {

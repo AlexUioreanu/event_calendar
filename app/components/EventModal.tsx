@@ -133,7 +133,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setColor(formattedEvents?.color || selectableColors.yellow);
         setDateRange([
           formattedEvents?.start ? dayjs(formattedEvents?.start) : null,
-          formattedEvents.end ? dayjs(formattedEvents.end).add(1, "day") : null,
+          formattedEvents.end ? dayjs(formattedEvents.end).add(0, "day") : null,
         ]);
       } else {
         console.error("Error updating events:", await response.json());

@@ -134,7 +134,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setDateRange([
           formattedEvents?.start ? dayjs(formattedEvents?.start) : null,
           formattedEvents.end
-            ? dayjs(formattedEvents.end).subtract(1, "day")
+            ? dayjs(formattedEvents.end).subtract(0, "day")
             : null,
         ]);
       } else {

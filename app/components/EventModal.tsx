@@ -55,7 +55,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       ? dayjs(dateRange[0]).add(1, "day")
       : null;
     const adjustedEndDate = dateRange[1]
-      ? dayjs(dateRange[1]).add(2, "day")
+      ? dayjs(dateRange[1]).add(1, "day")
       : null;
 
     const eventPayload = {

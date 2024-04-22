@@ -112,10 +112,12 @@ export default function CalendarPage() {
       <div
         className="event-hoverable event-card"
         style={{
+          width: "100%",
           position: "relative",
           padding: "5px",
           display: "flex",
           alignItems: "center",
+          backgroundColor: eventInfo.event.backgroundColor || "#A52A2A",
           justifyContent: "space-between",
         }}
       >

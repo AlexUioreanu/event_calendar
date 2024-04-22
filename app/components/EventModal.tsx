@@ -12,13 +12,14 @@ import "dayjs/locale/en-gb";
 import { simpleFieldStyle } from "../utils";
 
 const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
-  const isEditable: boolean = editingEventID !== null;
-
+  console.log(args);
   const selectableColors = {
-    yellow: "#fffa65",
-    green: "#006400",
+    yellow: "yellow",
+    pink: "pink",
+    lightGreen: "lightgreen",
     red: "red",
-    royalblue: "royalblue",
+    blue: "blue",
+    white: "white",
   };
 
   const [errorMsg, setErrorMsg] = useState("");
@@ -40,6 +41,12 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       fetchEvent();
     }
   }, [editingEventID]);
+
+  useEffect(() => {
+    if (args !== null) {
+      setDateRange([dayjs(args), dayjs(args)]);
+    }
+  }, [args]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -269,13 +276,12 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
               >
                 <Box
                   sx={{
-                    width: 24,
+                    width: "100%",
                     height: 24,
                     borderRadius: "3px",
                     backgroundColor: colorValue,
                   }}
                 />
-                {colorName}
               </MenuItem>
             ))}
           </TextField>

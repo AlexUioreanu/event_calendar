@@ -44,7 +44,7 @@ export default function CalendarPage() {
 
             startDate.setDate(startDate.getDate() + 1);
 
-            endDate.setDate(endDate.getDate() + 2);
+            endDate.setDate(endDate.getDate() + 1);
 
             return {
               id: event.event_id,

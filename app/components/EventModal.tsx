@@ -51,11 +51,11 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   const handleSubmit = async (e: any) => {
     e.preventDefault();
 
-    // const adjustedStartDate = dateRange[0]
-    //   ? dayjs(dateRange[0]).add(1, "day")
-    //   : null;
+    const adjustedStartDate = dateRange[0]
+      ? dayjs(dateRange[0]).add(1, "day")
+      : null;
     // const adjustedEndDate = dateRange[1]
-    //   ? dayjs(dateRange[1]).add(2, "day")
+    //   ? dayjs(dateRange[1]).add(1, "day")
     //   : null;
 
     console.log(dateRange[0]);
@@ -66,7 +66,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       title,
       description,
       color,
-      start: dateRange[0],
+      start: adjustedStartDate,
       end: dateRange[1],
     };
     console.log(editingEventID ? "PUT" : "POST");
@@ -133,9 +133,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setColor(formattedEvents?.color || selectableColors.yellow);
         setDateRange([
           formattedEvents?.start ? dayjs(formattedEvents?.start) : null,
-          formattedEvents.end
-            ? dayjs(formattedEvents.end).subtract(0, "day")
-            : null,
+          formattedEvents.end ? dayjs(formattedEvents.end).add(1, "day") : null,
         ]);
       } else {
         console.error("Error updating events:", await response.json());

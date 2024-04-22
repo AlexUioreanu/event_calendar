@@ -30,7 +30,7 @@ export default function Form() {
     const response = await signIn("credentials", {
       email: formData.get("username"),
       password: formData.get("password"),
-      redirect: false,
+      redirect: true,
     });
     console.log(`login response=${response}`);
     if (response?.ok) {

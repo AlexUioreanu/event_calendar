@@ -8,7 +8,7 @@ const handleError = (error: any, message: string) => {
   return NextResponse.json({ message }, { status: 500 });
 };
 
-export async function GET(req: NextApiRequest) {
+export async function GET(req: Request) {
   const eventId = req.url?.split("/").pop();
   const session = await getServerSession();
 

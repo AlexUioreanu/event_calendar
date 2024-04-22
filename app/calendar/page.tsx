@@ -115,7 +115,7 @@ export default function CalendarPage() {
           width: "100%",
           position: "relative",
           padding: "5px",
-          borderRadius: "16px",
+          borderRadius: "4px",
           display: "flex",
           alignItems: "center",
           margin: 0,

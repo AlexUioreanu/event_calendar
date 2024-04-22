@@ -1,16 +1,14 @@
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 import { getServerSession } from "next-auth";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Event } from "@/types";
-import { getSession } from "next-auth/react";
+import { NextApiRequest, NextApiResponse, ResponseLimit } from "next";
 
 const handleError = (error: any, message: string) => {
   console.error(message, error);
   return NextResponse.json({ message }, { status: 500 });
 };
 
-export async function GET(req: NextApiRequest, res: NextApiResponse) {
+export async function GET(req: NextApiRequest) {
   const eventId = req.url?.split("/").pop();
   const session = await getServerSession();
 

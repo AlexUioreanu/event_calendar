@@ -1,11 +1,8 @@
 "use client";
-
 import OutlinedTextField from "@/app/components/OutlinedTextField";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import React, { FormEvent, useState } from "react";
-import Link from "@mui/material/Link";
 import { whiteButtonOutlineStyles } from "../utils";
 
 export default function Form() {
@@ -32,7 +29,6 @@ export default function Form() {
       password: formData.get("password"),
       redirect: true,
     });
-    console.log(`login response=${response}`);
     if (response?.ok) {
       console.log(`login response=${response}`);
       router.push("/calendar");

@@ -1,9 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 import { getServerSession } from "next-auth";
-import { NextApiRequest, NextApiResponse } from "next";
-import { Event } from "@/types";
-import { getSession } from "next-auth/react";
 
 const handleError = (error: any, message: string) => {
   console.error(message, error);
@@ -52,10 +49,7 @@ export async function POST(req: Request, res: Response) {
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
-  console.log(event);
-
   try {
-    // Insert logic here
     const result = await sql`
       INSERT INTO events (title, description, color, user_email, start_date, end_date)
       VALUES (${event.title}, ${event.description}, ${event.color}, ${userEmail}, ${event.start}, ${event.end})
@@ -75,12 +69,11 @@ export async function POST(req: Request, res: Response) {
   }
 }
 
-export async function DELETE(request: Request, res: NextApiResponse) {
+export async function DELETE(request: Request) {
   const { eventId } = await request.json();
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
-  console.log({ eventId });
   try {
     const updateResponse = await sql`
      DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} ;

@@ -20,20 +20,17 @@ const handler = NextAuth({
       async authorize(credentials, req) {
         if (!credentials) return null;
 
-        console.log({ credentials });
         try {
           const response =
             await sql`SELECT * FROM users WHERE email = ${credentials?.email} `;
 
           const user = response.rows[0];
-          console.log({ user });
 
           const passCorrect = await compare(
             credentials.password,
             user.password
           );
 
-          console.log({ passCorrect });
           if (passCorrect) {
             return {
               id: user.id,
@@ -44,7 +41,6 @@ const handler = NextAuth({
             return null;
           }
         } catch (e) {
-          console.log({ e });
           console.error("Error during authorization:", e);
           return null;
         }

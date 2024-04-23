@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { sql } from "@vercel/postgres";
 import { getServerSession } from "next-auth";
-import { NextApiRequest, NextApiResponse, ResponseLimit } from "next";
 
 const handleError = (error: any, message: string) => {
   console.error(message, error);
@@ -20,8 +19,6 @@ export async function GET(req: Request) {
     `;
 
     const events = result.rows;
-
-    console.log(events);
 
     if (result.rows.length > 0) {
       return NextResponse.json(
@@ -52,7 +49,6 @@ export async function PUT(req: Request) {
   const eventId = req.url.split("/").pop();
   const data = await req.json();
   const { event } = data;
-  console.log(event);
   const session = await getServerSession();
   const userEmail = session?.user?.email;
 
@@ -61,8 +57,6 @@ export async function PUT(req: Request) {
       SELECT * FROM events
       WHERE user_email = ${userEmail} AND title = ${event.title} AND description = ${event.description} AND start_date = ${event.startDate} AND end_date = ${event.endDate} AND color = ${event.color}
     `;
-
-    console.log(existingEvent.rows);
 
     if (existingEvent.rows.length > 0) {
       return NextResponse.json(

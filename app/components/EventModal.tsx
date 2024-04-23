@@ -1,24 +1,22 @@
-import React, { Fragment, use, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import Modal from "react-modal";
-import { DemoContainer } from "@mui/x-date-pickers/internals/demo";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro";
 import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
 import { DateRangePicker } from "@mui/x-date-pickers-pro/DateRangePicker";
 import TextField from "@mui/material/TextField";
-import { Box, MenuItem, styled } from "@mui/material";
+import { Box, MenuItem } from "@mui/material";
 import { Event } from "@/types";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/en-gb";
 import { simpleFieldStyle } from "../utils";
 
 const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
-  console.log(args);
   const selectableColors = {
     yellow: "yellow",
     pink: "pink",
     lightGreen: "lightgreen",
     red: "red",
-    blue: "lightblue",
+    lightblue: "lightblue",
     white: "white",
   };
 
@@ -35,6 +33,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     null,
     null,
   ]);
+
+  console.log(color);
 
   useEffect(() => {
     if (editingEventID !== null) {
@@ -66,9 +66,6 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]).add(0, "day") : null;
     }
 
-    console.log(dateRange[0]);
-    console.log(dateRange[1]);
-
     const eventPayload = {
       id: editingEventID?.id,
       title,
@@ -77,8 +74,6 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       start: adjustedStartDate,
       end: adjustedEndDate,
     };
-    console.log(editingEventID ? "PUT" : "POST");
-    console.log(editingEventID);
     try {
       const response = await fetch(
         editingEventID
@@ -119,35 +114,27 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           "Content-Type": "application/json",
         },
       });
-      console.log(response);
       if (response.ok) {
         const fetchedEvents = await response.json();
 
         const formattedEvents: Event = fetchedEvents.events
           .map((event: any) => {
-            // Parse the start and end dates from the event
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
 
-            // Add one day to the start date
             startDate.setDate(startDate.getDate() + 0);
-
-            // Add one day to the end date
             endDate.setDate(endDate.getDate() + 0);
 
-            // Convert the dates back to strings or your desired format
             return {
               id: event.event_id,
               title: event.title,
-              start: startDate.toISOString(), // Assuming the dates need to be in ISO format
+              start: startDate.toISOString(),
               end: endDate.toISOString(),
               description: event.description,
               color: event.color,
             };
           })
           .pop();
-
-        console.log(formattedEvents);
 
         setTitle(formattedEvents?.title || "");
         setDescription(formattedEvents?.description || "");

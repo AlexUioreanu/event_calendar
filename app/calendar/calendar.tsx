@@ -266,7 +266,7 @@ export default function Calendar() {
 .fc .fc-daygrid-day-events {
   padding-bottom: 0;
   margin-bottom: 0px;
-  margin-top: -12px;
+  margin-top: -10px;
   // height: 100%;
 }
 

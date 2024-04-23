@@ -271,7 +271,7 @@ export default function Calendar() {
 }
 
 .fc .fc-daygrid-day-number {
-      font-size: 14px; /* Adjust this value as needed to make the date number smaller */
+      font-size: 11px; /* Adjust this value as needed to make the date number smaller */
     }
 
 // .fc .fc-daygrid-day .fc-daygrid-day-events .fc-daygrid-event-harness {

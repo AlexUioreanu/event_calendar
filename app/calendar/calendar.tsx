@@ -119,10 +119,11 @@ export default function Calendar() {
           width: "100%",
           position: "relative",
           borderRadius: "4px",
-          fontSize: "8px",
+          fontSize: "10px",
           display: "flex",
           alignItems: "center",
           margin: 0,
+          padding: "0px",
           backgroundColor: eventInfo.event.backgroundColor || "#A52A2A",
           justifyContent: "space-between",
         }}
@@ -207,6 +208,13 @@ export default function Calendar() {
   color: white; /* text color */
 }
 
+.fc .fc-daygrid-event {
+  marginBottom: 0px; /* Add space around events */
+  padding: 0px; /* Add space inside the event element */
+   display: flex; /* This will make the contents of the event flex items */
+  flex-direction: column; 
+}
+
 /* Adjust hover state if needed */
 .fc .fc-more-link:hover {
   background-color: #835514; /* slightly lighter brown */
@@ -247,6 +255,28 @@ export default function Calendar() {
     .fc-event {
   margin: 0;
 }
+
+.fc .fc-daygrid-event-harness, .fc .fc-daygrid-event-harness a {
+   margin-bottom: 0;
+      // margin-top: -3px;
+   padding-top: 0;
+  //  bottom: 0 !important; /* Ensuring the event sticks to the top */
+}
+
+.fc .fc-daygrid-day-events {
+  padding-bottom: 0;
+  margin-bottom: 0px;
+  margin-top: -12px;
+  // height: 100%;
+}
+
+.fc .fc-daygrid-day-number {
+      font-size: 14px; /* Adjust this value as needed to make the date number smaller */
+    }
+
+// .fc .fc-daygrid-day .fc-daygrid-day-events .fc-daygrid-event-harness {
+//   top: 0 !important;
+// }
         `}
       </style>
       <div

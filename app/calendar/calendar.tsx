@@ -119,7 +119,7 @@ export default function Calendar() {
           width: "100%",
           position: "relative",
           borderRadius: "4px",
-          fontSize: "10px",
+          fontSize: "8px",
           display: "flex",
           alignItems: "center",
           margin: 0,

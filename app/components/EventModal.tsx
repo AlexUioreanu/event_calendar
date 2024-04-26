@@ -34,8 +34,6 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     null,
   ]);
 
-  console.log(color);
-
   useEffect(() => {
     if (editingEventID !== null) {
       fetchEvent();
@@ -46,7 +44,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     if (args !== null) {
       setDateRange([dayjs(args), dayjs(args)]);
     }
-  }, [args]);
+  }, [isOpen]);
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();

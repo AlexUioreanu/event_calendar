@@ -5,15 +5,6 @@ import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
 import rrulePlugin from "@fullcalendar/rrule";
 import EventModal from "../components/EventModal";
-import {
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogContentText,
-  DialogActions,
-  Button,
-} from "@mui/material";
-import ErrorOutlineIcon from "@mui/icons-material/ErrorOutline";
 import { signOut } from "next-auth/react";
 
 export default function Calendar() {
@@ -21,9 +12,6 @@ export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [editingEventID, setEditingEventID] = useState(null);
-
-  const [dialogOpen, setDialogOpen] = useState(false);
-  const [dialogMessage, setDialogMessage] = useState("");
 
   async function fetchEvents() {
     try {
@@ -87,24 +75,19 @@ export default function Calendar() {
 
   async function handleDeleteEvent(eventInfo: any) {
     try {
-      if (eventInfo.title !== ".") {
-        setDialogMessage("This event cannot be deleted.");
-        setDialogOpen(true);
-      } else {
-        const response = await fetch(`/api/auth/events/`, {
-          method: "DELETE",
-          body: JSON.stringify({ eventId: eventInfo.id }),
-          headers: {
-            "Content-Type": "application/json",
-          },
-        });
+      const response = await fetch(`/api/auth/events/`, {
+        method: "DELETE",
+        body: JSON.stringify({ eventId: eventInfo.id }),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
 
-        if (response.ok) {
-          console.log("Event deleted successfully");
-          fetchEvents();
-        } else {
-          console.error("Failed to delete event:", await response.json());
-        }
+      if (response.ok) {
+        console.log("Event deleted successfully");
+        fetchEvents();
+      } else {
+        console.error("Failed to delete event:", await response.json());
       }
     } catch (error) {
       console.error("Error deleting event:", error);
@@ -129,63 +112,37 @@ export default function Calendar() {
         }}
       >
         {eventInfo.event.title}
-        <span
-          style={{
-            cursor: "pointer",
-            color: "black",
-            paddingRight: "8px",
-            paddingLeft: "8px",
-            borderRadius: "20%",
-            transition: "background-color 0.3s",
-            opacity: "1",
-          }}
-          onMouseEnter={(e) =>
-            (e.currentTarget.style.backgroundColor = "lightgrey")
-          }
-          onMouseLeave={(e) =>
-            (e.currentTarget.style.backgroundColor = "transparent")
-          }
-          onClick={(e) => {
-            e.stopPropagation();
-            handleDeleteEvent(eventInfo.event);
-          }}
-        >
-          X
-        </span>
+        {eventInfo.event.title === "." && (
+          <span
+            style={{
+              cursor: "pointer",
+              color: "black",
+              paddingRight: "8px",
+              paddingLeft: "8px",
+              borderRadius: "20%",
+              transition: "background-color 0.3s",
+              opacity: "1",
+            }}
+            onMouseEnter={(e) =>
+              (e.currentTarget.style.backgroundColor = "lightgrey")
+            }
+            onMouseLeave={(e) =>
+              (e.currentTarget.style.backgroundColor = "transparent")
+            }
+            onClick={(e) => {
+              e.stopPropagation();
+              handleDeleteEvent(eventInfo.event);
+            }}
+          >
+            X
+          </span>
+        )}
       </div>
     );
   }
 
   return (
     <>
-      <Dialog
-        open={dialogOpen}
-        onClose={() => setDialogOpen(false)}
-        aria-labelledby="alert-dialog-title"
-        aria-describedby="alert-dialog-description"
-      >
-        <DialogTitle
-          id="alert-dialog-title"
-          style={{ display: "flex", alignItems: "center", color: "#D32F2F" }}
-        >
-          <ErrorOutlineIcon style={{ marginRight: 10 }} />
-          {"Error"}
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText id="alert-dialog-description">
-            {dialogMessage}
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={() => setDialogOpen(false)}
-            color="inherit"
-            autoFocus
-          >
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
       <style>
         {`
           /* Overall calendar background */

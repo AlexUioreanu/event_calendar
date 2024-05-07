@@ -235,8 +235,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           <TextField
             label="Description"
             multiline
-            minRows={12}
-            maxRows={12}
+            minRows={14}
+            maxRows={14}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             variant="outlined"

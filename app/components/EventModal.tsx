@@ -236,12 +236,16 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
             label="Description"
             multiline
             minRows={12}
+            maxRows={12}
             value={description}
             onChange={(e) => setDescription(e.target.value)}
             variant="outlined"
             fullWidth
             InputProps={{
-              style: { resize: "both" },
+              style: {
+                resize: "both",
+                fontSize: "14px",
+              },
             }}
             sx={simpleFieldStyle}
           />

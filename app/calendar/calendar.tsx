@@ -74,6 +74,7 @@ export default function Calendar() {
   };
 
   async function handleDeleteEvent(eventInfo: any) {
+    if (eventInfo.event.title !== ".") return;
     try {
       const response = await fetch(`/api/auth/events/`, {
         method: "DELETE",

@@ -79,8 +79,6 @@ export async function DELETE(request: Request) {
      DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} AND title = '.';
     `;
 
-    console.log(updateResponse);
-
     if (updateResponse.rowCount > 0) {
       return NextResponse.json({ message: "Event removed successfully" });
     } else {

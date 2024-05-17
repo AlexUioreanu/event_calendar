@@ -76,19 +76,21 @@ export async function DELETE(request: Request) {
 
   try {
     const updateResponse = await sql`
-     DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} ;
+     DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} AND title = '.';
     `;
 
+    console.log(updateResponse);
+
     if (updateResponse.rowCount > 0) {
-      return NextResponse.json({ message: "Favorite removed successfully" });
+      return NextResponse.json({ message: "Event removed successfully" });
     } else {
       return NextResponse.json(
-        { message: "Favorite not found or failed to remove" },
+        { message: "Event not found or failed to remove" },
         { status: 404 }
       );
     }
   } catch (error) {
-    return handleError(error, "Error removing favorite");
+    return handleError(error, "Error removing event");
   }
 }
 export const GET = async (req: Request, res: Response) => {

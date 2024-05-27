@@ -26,6 +26,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     setErrorMsg("");
   }, []);
 
+  const [initialEvent, setInitialEvent] = useState<Event>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [color, setColor] = useState(selectableColors.yellow);
@@ -45,6 +46,9 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       setDateRange([dayjs(args), dayjs(args)]);
     }
   }, [isOpen]);
+
+  // Check if fields are filled and if edits have been made
+  const isFormFilled = title && description && dateRange[0] && dateRange[1];
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
@@ -134,6 +138,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           })
           .pop();
 
+        setInitialEvent(formattedEvents);
         setTitle(formattedEvents?.title || "");
         setDescription(formattedEvents?.description || "");
         setColor(formattedEvents?.color || selectableColors.yellow);
@@ -154,6 +159,11 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColor(event.target.value);
   };
+
+  const isUnchanged =
+    title === initialEvent?.title &&
+    description === initialEvent?.description &&
+    color === initialEvent?.color;
 
   return (
     <>
@@ -295,13 +305,31 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
               </MenuItem>
             ))}
           </TextField>
-          <button
-            type="submit"
-            className="loginButton"
-            style={{ marginTop: "20px" }}
-          >
-            Add Event
-          </button>
+          {editingEventID ? (
+            <button
+              type="submit"
+              className="loginButton"
+              disabled={isUnchanged}
+              style={{
+                marginTop: "20px",
+                backgroundColor: isUnchanged ? "#d3d3d3" : "#A66914",
+              }}
+            >
+              EDIT
+            </button>
+          ) : (
+            <button
+              type="submit"
+              className="loginButton"
+              disabled={!isFormFilled}
+              style={{
+                marginTop: "20px",
+                backgroundColor: !isFormFilled ? "#d3d3d3" : "#A66914",
+              }}
+            >
+              ADD
+            </button>
+          )}
         </form>
       </Modal>
     </>

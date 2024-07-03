@@ -26,6 +26,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     setErrorMsg("");
   }, []);
 
+  const [loading, setLoading] = useState(false);
+
   const [initialEvent, setInitialEvent] = useState<Event>();
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -109,6 +111,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   };
 
   async function fetchEvent() {
+    setLoading(true);
     try {
       const response = await fetch(`/api/auth/events/${editingEventID}`, {
         method: "GET",
@@ -138,6 +141,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           })
           .pop();
 
+        console.log(formattedEvents);
+
         setInitialEvent(formattedEvents);
         setTitle(formattedEvents?.title || "");
         setDescription(formattedEvents?.description || "");
@@ -153,6 +158,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       }
     } catch (error) {
       console.error("Error updating event:", error);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -168,7 +175,28 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   return (
     <>
       <style>
-        {`.MuiPaper-root {
+        {`
+        
+/* Spinner CSS */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-left-color: #A66914;
+  animation: spin 1s ease infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+}
+        .MuiPaper-root {
   background-color: rgb(245, 245, 220) !important;
   .Mui-selected {
   background-color: #A66914 !important; /* A shade of brown */
@@ -219,6 +247,24 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           },
         }}
       >
+        {loading && (
+          <div
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              zIndex: 1002,
+            }}
+          >
+            <div className="spinner"></div>
+          </div>
+        )}
         <form
           onSubmit={handleSubmit}
           style={{ display: "flex", flexDirection: "column", gap: "20px" }}
@@ -305,31 +351,19 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
               </MenuItem>
             ))}
           </TextField>
-          {editingEventID ? (
-            <button
-              type="submit"
-              className="loginButton"
-              disabled={isUnchanged}
-              style={{
-                marginTop: "20px",
-                backgroundColor: isUnchanged ? "#d3d3d3" : "#A66914",
-              }}
-            >
-              EDIT
-            </button>
-          ) : (
-            <button
-              type="submit"
-              className="loginButton"
-              disabled={!isFormFilled}
-              style={{
-                marginTop: "20px",
-                backgroundColor: !isFormFilled ? "#d3d3d3" : "#A66914",
-              }}
-            >
-              ADD
-            </button>
-          )}
+          <button
+            type="submit"
+            className="loginButton"
+            disabled={editingEventID ? isUnchanged : !isFormFilled}
+            style={{
+              marginTop: "20px",
+              backgroundColor: (editingEventID ? isUnchanged : !isFormFilled)
+                ? "#d3d3d3"
+                : "#A66914",
+            }}
+          >
+            {editingEventID ? "EDIT" : "ADD"}
+          </button>
         </form>
       </Modal>
     </>

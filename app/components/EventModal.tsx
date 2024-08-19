@@ -354,10 +354,10 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           <button
             type="submit"
             className="loginButton"
-            disabled={editingEventID ? true : !isFormFilled}
+            disabled={editingEventID ? isUnchanged : !isFormFilled}
             style={{
               marginTop: "20px",
-              backgroundColor: (editingEventID ? true : !isFormFilled)
+              backgroundColor: (editingEventID ? isUnchanged : !isFormFilled)
                 ? "#d3d3d3"
                 : "#A66914",
             }}

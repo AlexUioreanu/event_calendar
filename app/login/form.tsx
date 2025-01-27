@@ -4,6 +4,9 @@ import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import React, { FormEvent, useState } from "react";
 import { whiteButtonOutlineStyles } from "../utils";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import Spinner from "../components/Spinner";
 
 export default function Form() {
   const router = useRouter();
@@ -12,6 +15,8 @@ export default function Form() {
     username: "",
     password: "",
   });
+
+  const [loading, setLoading] = useState(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setinputs((prevState) => ({
@@ -22,20 +27,37 @@ export default function Form() {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const formData = new FormData(e.currentTarget);
+    setLoading(true);
 
+    const formData = new FormData(e.currentTarget);
     const response = await signIn("credentials", {
       email: formData.get("username"),
       password: formData.get("password"),
-      redirect: true,
+      redirect: false,
     });
     if (response?.ok) {
-      console.log(`login response=${response}`);
-      router.push("/calendar");
-      router.refresh();
+      toast.success("Logged in successfully!", {
+        autoClose: 1500,
+        hideProgressBar: false,
+        closeOnClick: true,
+      });
+
+      setTimeout(() => {
+        router.push("/calendar");
+        router.refresh();
+      }, 1500);
     } else {
-      throw Error("failed to log in");
+      const errorMessage =
+        response?.error || "Failed to log in. Please try again.";
+
+      toast.error(errorMessage, {
+        autoClose: 3000,
+        hideProgressBar: false,
+        closeOnClick: true,
+      });
     }
+
+    setLoading(false);
   };
 
   return (
@@ -101,11 +123,13 @@ export default function Form() {
             style={{
               marginTop: "1rem",
             }}
+            disabled={loading}
           >
-            Login
+            {loading ? <Spinner /> : "Login"}
           </button>
         </form>
       </div>
+      <ToastContainer position="bottom-center" />
     </div>
   );
 }

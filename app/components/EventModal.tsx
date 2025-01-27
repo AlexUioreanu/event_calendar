@@ -9,6 +9,8 @@ import { Event } from "@/types";
 import dayjs, { Dayjs } from "dayjs";
 import "dayjs/locale/en-gb";
 import { simpleFieldStyle } from "../utils";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   const selectableColors = {
@@ -79,6 +81,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       end: adjustedEndDate,
     };
     try {
+      setLoading(true);
       const response = await fetch(
         editingEventID
           ? `/api/auth/events/${editingEventID}`
@@ -91,6 +94,14 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
       );
 
       if (response.ok) {
+        setLoading(false);
+        toast.success(
+          editingEventID
+            ? "Event updated successfully!"
+            : "Event added successfully!",
+          { position: "bottom-center", autoClose: 3000 }
+        );
+
         console.log("Events updated successfully");
         setTitle("");
         setDescription("");
@@ -98,15 +109,27 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setDateRange([null, null]);
         onRequestClose();
       } else {
+        setLoading(false);
         console.error("Error updating event");
         const errorText = await response.text();
+        toast.error(errorText || "Failed to update the event.", {
+          position: "top-right",
+          autoClose: 3000,
+        });
         setErrorMsg(
           errorText || "Unknown error occurred while updating the event."
         );
       }
     } catch (error) {
+      setLoading(false);
+      toast.error("An error occurred while updating the event.", {
+        position: "top-right",
+        autoClose: 3000,
+      });
       console.error("Error updating event:", error);
       setErrorMsg("An error occurred while updating the event.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -119,6 +142,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           "Content-Type": "application/json",
         },
       });
+
       if (response.ok) {
         const fetchedEvents = await response.json();
 
@@ -149,15 +173,52 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setColor(formattedEvents?.color || selectableColors.yellow);
         setDateRange([
           formattedEvents?.start
-            ? dayjs(formattedEvents?.start).add(1, "day")
+            ? dayjs(formattedEvents.start).add(1, "day")
             : null,
-          formattedEvents.end ? dayjs(formattedEvents.end).add(1, "day") : null,
+          formattedEvents?.end
+            ? dayjs(formattedEvents.end).add(1, "day")
+            : null,
         ]);
+
+        // Success Toast
+        toast.success("Event details fetched successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       } else {
-        console.error("Error updating events:", await response.json());
+        // Error handling as before
+        const errorData = await response.json();
+        const serverErrorMessage =
+          errorData.message || "Failed to fetch the event.";
+
+        console.error("Error fetching event:", serverErrorMessage);
+
+        // Error Toast
+        toast.error(`Error: ${serverErrorMessage}`, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+        });
       }
-    } catch (error) {
-      console.error("Error updating event:", error);
+    } catch (error: any) {
+      console.error("Error fetching event:", error.message || error);
+
+      // Generic Error Toast
+      toast.error("An unexpected error occurred while fetching the event.", {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+      });
     } finally {
       setLoading(false);
     }
@@ -265,6 +326,7 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
 }
 }`}
       </style>
+      <ToastContainer />
       {errorMsg && (
         <Box style={{ color: "red", marginBottom: "20px" }}>{errorMsg}</Box>
       )}

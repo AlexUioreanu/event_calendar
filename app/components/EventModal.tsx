@@ -323,9 +323,13 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
             backgroundColor: "rgb(245, 245, 220)",
             overflow: "auto",
             WebkitOverflowScrolling: "touch",
-            borderRadius: "4px",
+            borderRadius: "8px",
             outline: "none",
-            padding: "20px",
+            padding: "24px",
+            // Make the modal larger but responsive
+            width: "min(800px, 90vw)",
+            maxWidth: "90vw",
+            maxHeight: "85vh",
             zIndex: 1001,
           },
         }}

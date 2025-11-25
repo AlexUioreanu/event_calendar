@@ -14,7 +14,7 @@ export default function ErrorBoundry({ error }: { error: Error }) {
         textAlign: "center",
       }}
     >
-  You&apos;ve got this error: {error.message}
+      You've got this error: {error.message}
     </div>
   );
 }

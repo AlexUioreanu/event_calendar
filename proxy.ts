@@ -1,6 +1,6 @@
 import nextAuthMiddleware from "next-auth/middleware";
 
-export function middleware(request: Request) {
+export function proxy(request: Request) {
 	// Delegate to NextAuth's middleware for auth handling
 	return nextAuthMiddleware(request as any);
 }

@@ -43,7 +43,7 @@ export async function PUT(req: Request) {
   }
 }
 
-export async function POST(req: Request, res: Response) {
+export async function POST(req: Request) {
   const data = await req.json();
   const { event } = data;
   const session = await getServerSession();
@@ -91,7 +91,7 @@ export async function DELETE(request: Request) {
     return handleError(error, "Error removing event");
   }
 }
-export const GET = async (req: Request, res: Response) => {
+export async function GET(req: Request) {
   const session = await getServerSession();
 
   const userEmail = session?.user?.email;
@@ -133,4 +133,4 @@ export const GET = async (req: Request, res: Response) => {
       message: "Error getting event listsss",
     });
   }
-};
+}

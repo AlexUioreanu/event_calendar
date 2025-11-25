@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Modal from "react-modal";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro";
 import { AdapterDayjs } from "@mui/x-date-pickers-pro/AdapterDayjs";
@@ -39,17 +39,72 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     null,
   ]);
 
-  useEffect(() => {
-    if (editingEventID !== null) {
-      fetchEvent();
+  const fetchEvent = useCallback(async () => {
+    if (editingEventID === null) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`/api/auth/events/${editingEventID}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      });
+      if (response.ok) {
+        const fetchedEvents = await response.json();
+        const formattedEvents: Event = fetchedEvents.events
+          .map((event: any) => {
+            const startDate = new Date(event.start_date);
+            const endDate = new Date(event.end_date);
+            return {
+              id: event.event_id,
+              title: event.title,
+              start: startDate.toISOString(),
+              end: endDate.toISOString(),
+              description: event.description,
+              color: event.color,
+            };
+          })
+          .pop();
+        setInitialEvent(formattedEvents);
+        setTitle(formattedEvents?.title || "");
+        setDescription(formattedEvents?.description || "");
+        setColor(formattedEvents?.color || selectableColors.yellow);
+        setDateRange([
+          formattedEvents?.start ? dayjs(formattedEvents.start) : null,
+          formattedEvents?.end ? dayjs(formattedEvents.end) : null,
+        ]);
+        toast.success("Event details fetched successfully!", {
+          position: "top-right",
+          autoClose: 3000,
+        });
+      } else {
+        const errorData = await response.json();
+        const serverErrorMessage =
+          errorData.message || "Failed to fetch the event.";
+        console.error("Error fetching event:", serverErrorMessage);
+        toast.error(`Error: ${serverErrorMessage}`, {
+          position: "top-right",
+          autoClose: 5000,
+        });
+      }
+    } catch (error: any) {
+      console.error("Error fetching event:", error.message || error);
+      toast.error("An unexpected error occurred while fetching the event.", {
+        position: "top-right",
+        autoClose: 5000,
+      });
+    } finally {
+      setLoading(false);
     }
-  }, [editingEventID]);
+  }, [editingEventID, selectableColors.yellow]);
 
   useEffect(() => {
-    if (args !== null) {
+    fetchEvent();
+  }, [fetchEvent]);
+
+  useEffect(() => {
+    if (isOpen && args !== null) {
       setDateRange([dayjs(args), dayjs(args)]);
     }
-  }, [isOpen]);
+  }, [isOpen, args]);
 
   // Check if fields are filled and if edits have been made
   const isFormFilled = title && description && dateRange[0] && dateRange[1];
@@ -133,96 +188,6 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
     }
   };
 
-  async function fetchEvent() {
-    setLoading(true);
-    try {
-      const response = await fetch(`/api/auth/events/${editingEventID}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.ok) {
-        const fetchedEvents = await response.json();
-
-        const formattedEvents: Event = fetchedEvents.events
-          .map((event: any) => {
-            const startDate = new Date(event.start_date);
-            const endDate = new Date(event.end_date);
-
-            startDate.setDate(startDate.getDate() + 0);
-            endDate.setDate(endDate.getDate() + 0);
-
-            return {
-              id: event.event_id,
-              title: event.title,
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
-              description: event.description,
-              color: event.color,
-            };
-          })
-          .pop();
-
-        console.log(formattedEvents);
-
-        setInitialEvent(formattedEvents);
-        setTitle(formattedEvents?.title || "");
-        setDescription(formattedEvents?.description || "");
-        setColor(formattedEvents?.color || selectableColors.yellow);
-        setDateRange([
-          formattedEvents?.start
-            ? dayjs(formattedEvents.start).add(1, "day")
-            : null,
-          formattedEvents?.end
-            ? dayjs(formattedEvents.end).add(1, "day")
-            : null,
-        ]);
-
-        // Success Toast
-        toast.success("Event details fetched successfully!", {
-          position: "top-right",
-          autoClose: 3000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      } else {
-        // Error handling as before
-        const errorData = await response.json();
-        const serverErrorMessage =
-          errorData.message || "Failed to fetch the event.";
-
-        console.error("Error fetching event:", serverErrorMessage);
-
-        // Error Toast
-        toast.error(`Error: ${serverErrorMessage}`, {
-          position: "top-right",
-          autoClose: 5000,
-          hideProgressBar: false,
-          closeOnClick: true,
-          pauseOnHover: true,
-          draggable: true,
-        });
-      }
-    } catch (error: any) {
-      console.error("Error fetching event:", error.message || error);
-
-      // Generic Error Toast
-      toast.error("An unexpected error occurred while fetching the event.", {
-        position: "top-right",
-        autoClose: 5000,
-        hideProgressBar: false,
-        closeOnClick: true,
-        pauseOnHover: true,
-        draggable: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }
 
   const handleColorChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setColor(event.target.value);

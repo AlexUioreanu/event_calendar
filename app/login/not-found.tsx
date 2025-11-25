@@ -20,7 +20,7 @@ const NotFound = () => {
         404 - Page Not Found
       </h1>
       <p style={{ marginBottom: "2rem" }}>
-        Oops! The page you're looking for doesn't exist.dsads
+  Oops! The page you&apos;re looking for doesn&apos;t exist.dsads
       </p>
       <button
         onClick={() => router.push("/dashboard")}

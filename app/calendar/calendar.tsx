@@ -27,13 +27,9 @@ export default function Calendar() {
 
         const formattedEvents: Event[] = fetchedEvents.events.map(
           (event: any) => {
+            // Assume DB stores correct UTC or date value; avoid manual shifting
             const startDate = new Date(event.start_date);
             const endDate = new Date(event.end_date);
-
-            startDate.setDate(startDate.getDate() + 1);
-
-            endDate.setDate(endDate.getDate() + 1);
-
             return {
               id: event.event_id,
               title: event.title,

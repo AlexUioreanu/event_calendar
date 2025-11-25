@@ -111,21 +111,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-    var adjustedStartDate;
-    var adjustedEndDate;
-    if (editingEventID !== null) {
-      adjustedStartDate = dateRange[0]
-        ? dayjs(dateRange[0]).subtract(1, "day")
-        : null;
-      adjustedEndDate = dateRange[1]
-        ? dayjs(dateRange[1]).subtract(1, "day")
-        : null;
-    } else {
-      adjustedStartDate = dateRange[0]
-        ? dayjs(dateRange[0]).add(0, "day")
-        : null;
-      adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]).add(0, "day") : null;
-    }
+  const adjustedStartDate = dateRange[0] ? dayjs(dateRange[0]) : null;
+  const adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]) : null;
 
     const eventPayload = {
       id: editingEventID?.id,
@@ -197,51 +184,17 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
   // Compare Start/End Dates
   // ---------------
   const isStartDateUnchanged = (() => {
-    if (editingEventID !== null) {
-      if (dateRange[0] && initialEvent?.start) {
-        const newStart = dayjs(dateRange[0]).subtract(1, "day");
-        const oldStart = dayjs(initialEvent.start);
-        return newStart.isSame(oldStart, "day");
-      }
-      if (!dateRange[0] && !initialEvent?.start) {
-        return true;
-      }
-      return false;
-    } else {
-      if (dateRange[0] && initialEvent?.start) {
-        const newStart = dayjs(dateRange[0]);
-        const oldStart = dayjs(initialEvent.start);
-        return newStart.isSame(oldStart, "day");
-      }
-      if (!dateRange[0] && !initialEvent?.start) {
-        return true;
-      }
-      return false;
+    if (dateRange[0] && initialEvent?.start) {
+      return dayjs(dateRange[0]).isSame(dayjs(initialEvent.start), "day");
     }
+    return !dateRange[0] && !initialEvent?.start;
   })();
 
   const isEndDateUnchanged = (() => {
-    if (editingEventID !== null) {
-      if (dateRange[1] && initialEvent?.end) {
-        const newEnd = dayjs(dateRange[1]).subtract(1, "day");
-        const oldEnd = dayjs(initialEvent.end);
-        return newEnd.isSame(oldEnd, "day");
-      }
-      if (!dateRange[1] && !initialEvent?.end) {
-        return true;
-      }
-      return false;
-    } else {
-      if (dateRange[1] && initialEvent?.end) {
-        const newEnd = dayjs(dateRange[1]);
-        const oldEnd = dayjs(initialEvent.end);
-        return newEnd.isSame(oldEnd, "day");
-      }
-      if (!dateRange[1] && !initialEvent?.end) {
-        return true;
-      }
-      return false;
+    if (dateRange[1] && initialEvent?.end) {
+      return dayjs(dateRange[1]).isSame(dayjs(initialEvent.end), "day");
     }
+    return !dateRange[1] && !initialEvent?.end;
   })();
 
   // ---------------

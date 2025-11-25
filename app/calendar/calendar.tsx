@@ -23,10 +23,27 @@ function addOneDay(dateStr: string): string {
   return `${year}-${month}-${day}`;
 }
 
+// Normalize a DB or API value to a 'YYYY-MM-DD' string
+function toDateOnlyString(value: unknown): string | null {
+  if (value == null) return null;
+  if (typeof value === "string") {
+    if (/^\d{4}-\d{2}-\d{2}$/.test(value)) return value;
+    if (value.includes("T") && value.length >= 10) return value.slice(0, 10);
+  }
+  if (value instanceof Date) {
+    const year = value.getUTCFullYear();
+    const month = String(value.getUTCMonth() + 1).padStart(2, "0");
+    const day = String(value.getUTCDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+  }
+  return null;
+}
+
 export default function Calendar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
-  const [events, setEvents] = useState<Event[]>([]);
+  // Use a loose type to avoid DOM Event conflicts and allow FullCalendar event input
+  const [events, setEvents] = useState<any[]>([]);
   const [editingEventID, setEditingEventID] = useState(null);
 
   async function fetchEvents() {
@@ -39,28 +56,30 @@ export default function Calendar() {
       });
 
       if (response.ok) {
-        const fetchedEvents = await response.json();
+        const payload = await response.json();
+        // Support multiple API shapes: {events}, {data:{events}}, or raw array
+        const rows: any[] = payload?.data?.events ?? payload?.events ?? (Array.isArray(payload) ? payload : []);
 
-        const formattedEvents: Event[] = fetchedEvents.events.map((event: any) => {
-          // start_date and end_date are DATE columns returned as 'YYYY-MM-DD'.
-          // FullCalendar expects end to be exclusive for all-day multi-day events.
-          const startStr: string = event.start_date; // e.g. '2025-11-19'
-          const endInclusiveStr: string = event.end_date; // inclusive last day
-          // Compute exclusive end for FullCalendar by adding one day.
-          const endExclusive = addOneDay(endInclusiveStr);
-          return {
-            id: event.event_id,
-            title: event.title,
-            start: startStr,
-            end: endExclusive,
-            description: event.description,
-            color: event.color,
-            // @ts-ignore add allDay flag for clarity (Event interface could be extended)
-            allDay: true,
-          };
-        });
+        const formattedEvents = rows
+          .map((row: any) => {
+            const id = row.event_id ?? row.id;
+            const title = row.title ?? "(no title)";
+            const startDateOnly = toDateOnlyString(row.start_date ?? row.start);
+            const endDateOnlyInc = toDateOnlyString(row.end_date ?? row.end ?? row.start);
+            if (!startDateOnly || !endDateOnlyInc) return null;
+            return {
+              id,
+              title,
+              start: startDateOnly,
+              end: addOneDay(endDateOnlyInc), // exclusive end for all-day
+              description: row.description ?? "",
+              color: row.color,
+              allDay: true,
+            };
+          })
+          .filter(Boolean);
 
-        setEvents(formattedEvents);
+        setEvents(formattedEvents as any[]);
       } else {
         console.error("Error updating events:", await response.json());
       }
@@ -158,7 +177,6 @@ export default function Calendar() {
 
   return (
     <>
-  <script />
       <style>
         {`
           /* Overall calendar background */

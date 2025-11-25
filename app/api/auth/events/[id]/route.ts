@@ -78,7 +78,8 @@ export async function PUT(req: Request) {
         event_id = ${eventId};
     `;
 
-    if (updateResponse.rowCount > 0) {
+  // rowCount can be null/undefined in some driver responses — default to 0
+  if ((updateResponse.rowCount ?? 0) > 0) {
       return NextResponse.json({ message: "Event updated successfully" });
     } else {
       return NextResponse.json(

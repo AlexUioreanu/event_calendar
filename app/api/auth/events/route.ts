@@ -30,7 +30,7 @@ export async function PUT(req: Request) {
   VALUES (${event.title}, ${event.description}, ${event.color}, ${userEmail}, ${event.start}, ${event.end})
 `;
 
-    if (updateResponse.rowCount > 0) {
+  if ((updateResponse.rowCount ?? 0) > 0) {
       return NextResponse.json({ message: "Event updated successfully" });
     } else {
       return NextResponse.json(
@@ -56,7 +56,7 @@ export async function POST(req: Request, res: Response) {
       RETURNING *;
     `;
 
-    if (result.rowCount > 0) {
+  if ((result.rowCount ?? 0) > 0) {
       return NextResponse.json({ message: "Event updated successfully" });
     } else {
       return NextResponse.json(
@@ -79,7 +79,7 @@ export async function DELETE(request: Request) {
      DELETE FROM events WHERE user_email = ${userEmail} AND event_id = ${eventId} AND title = '.';
     `;
 
-    if (updateResponse.rowCount > 0) {
+  if ((updateResponse.rowCount ?? 0) > 0) {
       return NextResponse.json({ message: "Event removed successfully" });
     } else {
       return NextResponse.json(

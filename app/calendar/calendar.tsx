@@ -7,6 +7,22 @@ import rrulePlugin from "@fullcalendar/rrule";
 import EventModal from "../components/EventModal";
 import { signOut } from "next-auth/react";
 
+// Add one day to a YYYY-MM-DD date string and return new YYYY-MM-DD
+function addOneDay(dateStr: string): string {
+  const parts = dateStr.split("-");
+  if (parts.length !== 3) return dateStr;
+  const y = Number(parts[0]);
+  const m = Number(parts[1]);
+  const d = Number(parts[2]);
+  if (!Number.isFinite(y) || !Number.isFinite(m) || !Number.isFinite(d)) return dateStr;
+  const date = new Date(Date.UTC(y as number, (m as number) - 1, d as number));
+  date.setUTCDate(date.getUTCDate() + 1);
+  const year = date.getUTCFullYear();
+  const month = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(date.getUTCDate()).padStart(2, "0");
+  return `${year}-${month}-${day}`;
+}
+
 export default function Calendar() {
   const [modalOpen, setModalOpen] = useState(false);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -25,21 +41,24 @@ export default function Calendar() {
       if (response.ok) {
         const fetchedEvents = await response.json();
 
-        const formattedEvents: Event[] = fetchedEvents.events.map(
-          (event: any) => {
-            // Assume DB stores correct UTC or date value; avoid manual shifting
-            const startDate = new Date(event.start_date);
-            const endDate = new Date(event.end_date);
-            return {
-              id: event.event_id,
-              title: event.title,
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
-              description: event.description,
-              color: event.color,
-            };
-          }
-        );
+        const formattedEvents: Event[] = fetchedEvents.events.map((event: any) => {
+          // start_date and end_date are DATE columns returned as 'YYYY-MM-DD'.
+          // FullCalendar expects end to be exclusive for all-day multi-day events.
+          const startStr: string = event.start_date; // e.g. '2025-11-19'
+          const endInclusiveStr: string = event.end_date; // inclusive last day
+          // Compute exclusive end for FullCalendar by adding one day.
+          const endExclusive = addOneDay(endInclusiveStr);
+          return {
+            id: event.event_id,
+            title: event.title,
+            start: startStr,
+            end: endExclusive,
+            description: event.description,
+            color: event.color,
+            // @ts-ignore add allDay flag for clarity (Event interface could be extended)
+            allDay: true,
+          };
+        });
 
         setEvents(formattedEvents);
       } else {
@@ -139,6 +158,7 @@ export default function Calendar() {
 
   return (
     <>
+  <script />
       <style>
         {`
           /* Overall calendar background */
@@ -251,6 +271,7 @@ export default function Calendar() {
         >
           <FullCalendar
             height="100%"
+            timeZone="UTC"
             handleWindowResize={true}
             dayCellContent={(e) => e.dayNumberText}
             dateClick={handleDateClick}

@@ -51,13 +51,12 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         const fetchedEvents = await response.json();
         const formattedEvents: Event = fetchedEvents.events
           .map((event: any) => {
-            const startDate = new Date(event.start_date);
-            const endDate = new Date(event.end_date);
+            // start_date/end_date are DATE columns ('YYYY-MM-DD')
             return {
               id: event.event_id,
               title: event.title,
-              start: startDate.toISOString(),
-              end: endDate.toISOString(),
+              start: event.start_date, // keep as date-only string
+              end: event.end_date, // keep as date-only string
               description: event.description,
               color: event.color,
             };
@@ -111,11 +110,11 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-  const adjustedStartDate = dateRange[0] ? dayjs(dateRange[0]) : null;
-  const adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]) : null;
+  const adjustedStartDate = dateRange[0] ? dayjs(dateRange[0]).format("YYYY-MM-DD") : null;
+  const adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]).format("YYYY-MM-DD") : null;
 
     const eventPayload = {
-      id: editingEventID?.id,
+  id: editingEventID,
       title,
       description,
       color,

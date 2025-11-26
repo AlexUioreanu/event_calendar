@@ -61,20 +61,24 @@ export default function Calendar() {
         const rows: any[] = payload?.data?.events ?? payload?.events ?? (Array.isArray(payload) ? payload : []);
 
         const formattedEvents = rows
-          .map((event: any) => {
-            // Shift both start and end by +1 day as requested
-            const startPlusOne = addOneDay(event.start_date ?? event.start);
-            const endPlusOneInc = addOneDay(event.end_date ?? event.end ?? event.start);
-            // For multi-day all-day, FullCalendar expects exclusive end
-            const isSingleDay = startPlusOne === endPlusOneInc;
-            const endExclusive = isSingleDay ? undefined : addOneDay(endPlusOneInc);
+          .map((row: any) => {
+            const rawStart = row.start_date ?? row.start;
+            const rawEnd = row.end_date ?? row.end ?? rawStart;
+            const startDateOnly = toDateOnlyString(rawStart);
+            const endDateOnly = toDateOnlyString(rawEnd);
+            if (!startDateOnly || !endDateOnly) return null;
+            // Apply requested +1 day view shift ONLY to display (not for comparison logic)
+            const displayStart = addOneDay(startDateOnly);
+            const inclusiveEndShifted = addOneDay(endDateOnly);
+            const isSingleDay = startDateOnly === endDateOnly;
+            const exclusiveEnd = isSingleDay ? undefined : addOneDay(inclusiveEndShifted);
             return {
-              id: event.event_id ?? event.id,
-              title: event.title,
-              start: startPlusOne,
-              end: endExclusive,
-              description: event.description,
-              color: event.color,
+              id: row.event_id ?? row.id,
+              title: row.title || "(untitled)",
+              start: displayStart,
+              end: exclusiveEnd,
+              description: row.description ?? "",
+              color: row.color,
               allDay: true,
             };
           })

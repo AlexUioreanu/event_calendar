@@ -289,7 +289,6 @@ export default function Calendar() {
         >
           <FullCalendar
             height="100%"
-            timeZone="UTC"
             handleWindowResize={true}
             dayCellContent={(e) => e.dayNumberText}
             dateClick={handleDateClick}

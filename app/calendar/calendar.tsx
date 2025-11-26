@@ -67,11 +67,11 @@ export default function Calendar() {
             const startDateOnly = toDateOnlyString(rawStart);
             const endDateOnly = toDateOnlyString(rawEnd);
             if (!startDateOnly || !endDateOnly) return null;
-            // Apply requested +1 day view shift ONLY to display (not for comparison logic)
+            // Retrieval policy: show +1 day
             const displayStart = addOneDay(startDateOnly);
-            const inclusiveEndShifted = addOneDay(endDateOnly);
+            const displayEndInclusive = addOneDay(endDateOnly);
             const isSingleDay = startDateOnly === endDateOnly;
-            const exclusiveEnd = isSingleDay ? undefined : addOneDay(inclusiveEndShifted);
+            const exclusiveEnd = isSingleDay ? undefined : addOneDay(displayEndInclusive);
             return {
               id: row.event_id ?? row.id,
               title: row.title || "(untitled)",

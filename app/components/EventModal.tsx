@@ -110,8 +110,13 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
 
   const handleSubmit = async (e: any) => {
     e.preventDefault();
-  const adjustedStartDate = dateRange[0] ? dayjs(dateRange[0]).format("YYYY-MM-DD") : null;
-  const adjustedEndDate = dateRange[1] ? dayjs(dateRange[1]).format("YYYY-MM-DD") : null;
+  // Add/edit policy: store one day in minus in DB relative to UI
+  const adjustedStartDate = dateRange[0]
+    ? dayjs(dateRange[0]).subtract(1, "day").format("YYYY-MM-DD")
+    : null;
+  const adjustedEndDate = dateRange[1]
+    ? dayjs(dateRange[1]).subtract(1, "day").format("YYYY-MM-DD")
+    : null;
 
     const eventPayload = {
   id: editingEventID,

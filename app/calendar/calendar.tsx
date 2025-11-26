@@ -61,19 +61,20 @@ export default function Calendar() {
         const rows: any[] = payload?.data?.events ?? payload?.events ?? (Array.isArray(payload) ? payload : []);
 
         const formattedEvents = rows
-          .map((row: any) => {
-            const id = row.event_id ?? row.id;
-            const title = row.title ?? "(no title)";
-            const startDateOnly = toDateOnlyString(row.start_date ?? row.start);
-            const endDateOnlyInc = toDateOnlyString(row.end_date ?? row.end ?? row.start);
-            if (!startDateOnly || !endDateOnlyInc) return null;
+          .map((event: any) => {
+            // Shift both start and end by +1 day as requested
+            const startPlusOne = addOneDay(event.start_date ?? event.start);
+            const endPlusOneInc = addOneDay(event.end_date ?? event.end ?? event.start);
+            // For multi-day all-day, FullCalendar expects exclusive end
+            const isSingleDay = startPlusOne === endPlusOneInc;
+            const endExclusive = isSingleDay ? undefined : addOneDay(endPlusOneInc);
             return {
-              id,
-              title,
-              start: startDateOnly,
-              end: addOneDay(endDateOnlyInc), // exclusive end for all-day
-              description: row.description ?? "",
-              color: row.color,
+              id: event.event_id ?? event.id,
+              title: event.title,
+              start: startPlusOne,
+              end: endExclusive,
+              description: event.description,
+              color: event.color,
               allDay: true,
             };
           })

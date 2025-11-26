@@ -67,8 +67,8 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
         setDescription(formattedEvents?.description || "");
         setColor(formattedEvents?.color || selectableColors.yellow);
         setDateRange([
-          formattedEvents?.start ? dayjs(formattedEvents.start) : null,
-          formattedEvents?.end ? dayjs(formattedEvents.end) : null,
+          formattedEvents?.start ? dayjs(formattedEvents.start).add(1, "day") : null,
+          formattedEvents?.end ? dayjs(formattedEvents.end).add(1, "day") : null,
         ]);
         toast.success("Event details fetched successfully!", {
           position: "top-right",

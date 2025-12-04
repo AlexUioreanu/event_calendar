@@ -37,21 +37,21 @@ export default function Form() {
     });
     if (response?.ok) {
       toast.success("Logged in successfully!", {
-        autoClose: 1500,
+        autoClose: 1000,
         hideProgressBar: false,
         closeOnClick: true,
       });
 
-      setTimeout(() => {
+  setTimeout(() => {
         router.push("/calendar");
         router.refresh();
-      }, 1500);
+  }, 1000);
     } else {
       const errorMessage =
         response?.error || "Failed to log in. Please try again.";
 
       toast.error(errorMessage, {
-        autoClose: 3000,
+        autoClose: 1500,
         hideProgressBar: false,
         closeOnClick: true,
       });

@@ -1,5 +1,5 @@
 "use client";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import interactionPlugin from "@fullcalendar/interaction";
@@ -45,6 +45,7 @@ export default function Calendar() {
   // Use a loose type to avoid DOM Event conflicts and allow FullCalendar event input
   const [events, setEvents] = useState<any[]>([]);
   const [editingEventID, setEditingEventID] = useState(null);
+  const calendarRef = useRef<any>(null);
 
   async function fetchEvents() {
     try {
@@ -293,6 +294,7 @@ export default function Calendar() {
           }}
         >
           <FullCalendar
+            ref={calendarRef}
             height="100%"
             handleWindowResize={true}
             dayCellContent={(e) => e.dayNumberText}
@@ -306,7 +308,7 @@ export default function Calendar() {
             selectable={true}
             selectMirror={true}
             headerToolbar={{
-              left: "prev,next today",
+              left: "prevYear,prev,next,nextYear today",
               center: "title",
               right: "logoutButton",
             }}
@@ -318,6 +320,20 @@ export default function Calendar() {
                 text: "Logout",
                 click: () => {
                   signOut();
+                },
+              },
+              prevYear: {
+                text: "«",
+                click: () => {
+                  const api = calendarRef.current?.getApi?.() ?? calendarRef.current;
+                  api?.prevYear?.();
+                },
+              },
+              nextYear: {
+                text: "»",
+                click: () => {
+                  const api = calendarRef.current?.getApi?.() ?? calendarRef.current;
+                  api?.nextYear?.();
                 },
               },
             }}

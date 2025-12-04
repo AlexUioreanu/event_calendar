@@ -280,25 +280,22 @@ export default function Calendar() {
         style={{
           backgroundColor: " rgb(243, 224, 200)",
           height: "100vh",
-          width: "100vw",
-          margin: 0,
-          padding: 0,
+          padding: "2px",
         }}
       >
         <div
           style={{
             height: "100%",
-            width: "100%",
             backgroundColor: "#f5f5dc",
-            margin: 0,
-            padding: 0,
-            borderRadius: 0,
-            boxShadow: "none",
+            margin: " auto",
+            padding: "1rem",
+            borderRadius: "3rem",
+            boxShadow: " 0 0 3rem rgba(0, 0, 0, 0.6)",
           }}
         >
           <FullCalendar
             ref={calendarRef}
-            height="100vh"
+            height="100%"
             handleWindowResize={true}
             dayCellContent={(e) => e.dayNumberText}
             dateClick={handleDateClick}

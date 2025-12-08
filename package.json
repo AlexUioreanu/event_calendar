@@ -2,8 +2,7 @@
   "name": "event_calendar",
   "version": "0.1.0",
   "private": true,
-  "engines": {
-  },
+  "engines": {},
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -24,18 +23,20 @@
     "@mui/material": "^7.3.5",
     "@mui/x-date-pickers": "^8.19.0",
     "@mui/x-date-pickers-pro": "^8.19.0",
+    "@vercel/analytics": "^1.6.1",
     "@vercel/postgres": "^0.10.0",
     "bcrypt": "^6.0.0",
     "date-fns": "^4.1.0",
     "dayjs": "^1.11.19",
-  "next": "latest",
+    "next": "latest",
     "next-auth": "^4.24.13",
-  "react": "latest",
-  "react-dom": "latest",
+    "react": "latest",
+    "react-dom": "latest",
     "react-modal": "^3.16.3",
     "react-toastify": "^11.0.5"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "latest",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^24.0.0",
     "@types/react": "^19.0.0",
@@ -43,12 +44,11 @@
     "@types/react-modal": "^3.16.3",
     "autoprefixer": "latest",
     "eslint": "latest",
-  "eslint-config-next": "latest",
+    "eslint-config-next": "latest",
     "husky": "^9.1.7",
     "lint-staged": "^16.2.7",
     "postcss": "latest",
-  "tailwindcss": "latest",
-  "@tailwindcss/postcss": "latest",
+    "tailwindcss": "latest",
     "typescript": "latest"
   }
 }

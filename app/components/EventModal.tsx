@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useCallback } from "react";
-import { useSession } from "next-auth/react";
 import { track } from "@vercel/analytics";
 import Modal from "react-modal";
 import { LocalizationProvider } from "@mui/x-date-pickers-pro";
@@ -15,7 +14,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
-  const { data: session } = useSession();
   const selectableColors = {
     yellow: "yellow",
     pink: "pink",
@@ -151,14 +149,13 @@ const EventModal = ({ isOpen, onRequestClose, editingEventID, args }: any) => {
           { position: "bottom-center", autoClose: 3000 }
         );
 
-        // Track event creation/update with user/title/date
+        // Track event creation/update with title/date (no session dependency)
         try {
-          const userIdOrEmail = session?.user?.email || session?.user?.name || "unknown";
           const trackedTitle = title || "(untitled)";
           const trackedDate = adjustedStartDate || null;
           track("calendar_event_saved", {
             action: editingEventID ? "update" : "create",
-            user: userIdOrEmail,
+            user: "unknown",
             title: trackedTitle,
             date: trackedDate,
           });
